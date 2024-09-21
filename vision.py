@@ -3,7 +3,7 @@ import streamlit as st
 import os
 import google.generativeai as genai
 from PIL import Image
-from datetime import datetime
+
 
 # Load environment variables
 load_dotenv()
@@ -12,11 +12,11 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Initialize Streamlit app
-st.set_page_config(page_title="Gemini AI Chatbot", layout="centered")
+st.set_page_config(page_title="MindCare AI Chatbot", layout="centered")
 
 # Function to get responses from Gemini API
 def get_gemini_response(question, image=None):
-    model = genai.GenerativeModel('gemini-pro-vision' if image else 'gemini-pro')
+    model = genai.GenerativeModel('gemini-pro' if image else 'gemini-pro')
     if image:
         response = model.generate_content([question, image])
     else:
@@ -34,7 +34,7 @@ def display_message(role, message):
     else:
         st.markdown(f"""
         <div style='text-align: left; background-color: #F1F0F0; padding: 10px; border-radius: 10px; margin: 10px; max-width: 70%;'>
-            <b>Gemini:</b> {message}
+            <b>Chatbot:</b> {message}
         </div>
         """, unsafe_allow_html=True)
 
@@ -48,9 +48,9 @@ chat_placeholder = st.empty()
 # Function to display the conversation in a scrollable chat format
 def display_conversation():
     with chat_placeholder.container():
-        st.subheader("Conversation")
-        for role, text, timestamp in st.session_state['conversation']:
-            display_message(role, f"{text} \n _{timestamp}_")
+        st.subheader("MindCare Chatbot")
+        for role, text in st.session_state['conversation']:
+            display_message(role, f"{text}")
 
 # Display the conversation first
 display_conversation()
@@ -74,8 +74,8 @@ if st.button("Send") and input_text:
     response = get_gemini_response(input_text, image)
 
     # Append user query and bot response to conversation with timestamps
-    st.session_state['conversation'].append(("User", input_text, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-    st.session_state['conversation'].append(("Bot", response, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    st.session_state['conversation'].append(("User", input_text))
+    st.session_state['conversation'].append(("Bot", response))
     
     # Refresh the conversation display
     display_conversation()
